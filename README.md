@@ -12,3 +12,10 @@ Once these steps are carried out, you have a few more RESTful options.
 A) Get a list of all places you have passwords stored for (i.e. the strings you used to identify them when you initialized)
 B) Get a specific password given the above identity and your root password
 C) Delete a speciffic password given the above identity and your root password
+
+TODO:
+- Write a shell script to autocompile
+- Figure out how to concatenate identifiers array
+- Script to spin up new instance of contract (for a new account)
+- init function (initialize a new contract)
+- test stuff?
