@@ -1,16 +1,14 @@
 contract Password {
-    // The account address of the user who is executing the contract
-    address public UserAddress;
-
-    // A seed to hash the password (a.k.a. the root password)
-    bytes32 public Seed;
+    // A seed to hash a given password with
+    // This should itself be a hash of the account address and a master password string
+    bytes32 Seed;
 
     // An array of identifier strings to use when getting a password
     bytes32[] public Identifiers;
 
     // Add an identifier to the array  
     function create(address _user_address, bytes32 _identifier, bytes32 _seed){
-        if (_user_address == UserAddress && _seed == Seed){
+        if (sha3(_user_address,_seed) == Seed){
             // Append the Identifiers array with a new one
             Identifiers[Identifiers.length++] = _identifier;
             // Return the newly minted password
@@ -20,7 +18,7 @@ contract Password {
     
     // Get a password after finding the identifier in the array
     function get_password(address _user_address, bytes32 _identifier, bytes32 _seed){
-        if (_user_address == UserAddress && _seed == Seed){
+        if (sha3(_user_address, _seed) == Seed){
             // Find the appropriate identifier
             for (uint i=0; i<Identifiers.length; i++){
                 if (Identifiers[i] == _identifier){
@@ -33,7 +31,7 @@ contract Password {
     // Get a list of your identifiers
     // BUZZKILL... solidity does not yet support return of arrays... will need to find a way to concatenate
     //function get_list(address_user_address, bytes32 _seed) returns (bytes32[]){
-    //    if (_user_address == UserAddress && _seed == Seed){
+    //    if (sha3(_user_address,_seed) == Seed){
     //        return Identifiers;
     //    }  
     //}
