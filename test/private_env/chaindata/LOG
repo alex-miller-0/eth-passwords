@@ -1,10 +1,8 @@
-=============== Nov 17, 2015 (CST) ===============
-22:01:12.101662 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-22:01:12.101814 db@open opening
-22:01:12.101869 journal@recovery F·1
-22:01:12.101948 journal@recovery recovering @8
-22:01:12.135982 mem@flush created L0@10 N·3 S·266B "blo..um-,v7013":"\xc5\xd2F..\x85\xa4p,v7011"
-22:01:12.136545 db@janitor F·5 G·0
-22:01:12.136580 db@open done T·34.754337ms
-22:02:22.449271 db@close closing
-22:02:22.449365 db@close done T·89.79µs
+=============== Nov 19, 2015 (CST) ===============
+22:02:06.263050 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+22:02:06.263253 db@open opening
+22:02:06.263371 journal@recovery F·1
+22:02:06.263786 journal@recovery recovering @40
+22:02:06.290834 mem@flush created L0@43 N·3 S·266B "blo..um-,v7053":"\xc5\xd2F..\x85\xa4p,v7051"
+22:02:06.292414 db@janitor F·4 G·0
+22:02:06.292438 db@open done T·29.171473ms

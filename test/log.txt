@@ -1,0 +1,19 @@
+I1119 22:02:06.262842    6439 database.go:71] Alloted 16MB cache to private_env/chaindata
+I1119 22:02:06.292680    6439 database.go:71] Alloted 16MB cache to private_env/dapp
+I1119 22:02:06.293867    6439 backend.go:331] Protocol Versions: [63 62 61], Network Id: 257291
+I1119 22:02:06.294615    6439 genesis.go:89] Genesis block already in chain. Writing canonical number
+I1119 22:02:06.294661    6439 backend.go:343] Successfully wrote genesis block. New genesis hash = d8b14815479c7b1c6c1158542396e70ce8dc4b05c734140a7793e62470b4732e
+I1119 22:02:06.294702    6439 backend.go:379] Blockchain DB Version: 3
+I1119 22:02:06.294968    6439 blockchain.go:189] Last header: #242 [3b25fdb2…] TD=33642341
+I1119 22:02:06.294982    6439 blockchain.go:190] Last block: #242 [3b25fdb2…] TD=33642341
+I1119 22:02:06.294989    6439 blockchain.go:191] Fast block: #242 [3b25fdb2…] TD=33642341
+I1119 22:02:06.298716    6439 cmd.go:124] Starting Geth/v1.3.1/linux/go1.5.1
+I1119 22:02:06.298765    6439 server.go:311] Starting Server
+I1119 22:02:06.298821    6439 backend.go:598] Server started
+I1119 22:02:06.298958    6439 server.go:552] Listening on [::]:30303
+I1119 22:02:06.298976    6439 ipc.go:112] IPC service started (private_env/geth.ipc)
+I1119 22:02:09.619045    6439 nat.go:111] mapped network port tcp:30303 -> 30303 (ethereum p2p) using UPNP IGDv1-IP1
+I1119 22:44:09.934416    6439 solidity.go:114] solc, the solidity compiler commandline interface
+Version: 0.1.6-0/Release-Linux/g++/int linked to libethereum-0.9.93-0/Release-Linux/g++/int
+
+path: /usr/bin/solc
