@@ -1,18 +1,8 @@
-=============== Nov 19, 2015 (CST) ===============
-21:52:54.294486 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-21:52:54.294567 db@open opening
-21:52:54.294616 journal@recovery F·1
-21:52:54.294710 journal@recovery recovering @37
-21:52:54.329371 mem@flush created L0@39 N·3 S·266B "blo..um-,v7049":"\xc5\xd2F..\x85\xa4p,v7047"
-21:52:54.330054 db@janitor F·7 G·0
-21:52:54.330081 db@open done T·35.502533ms
-21:52:54.330157 table@compaction L0·4 -> L1·1 S·162KiB Q·7050
-21:52:54.371618 table@build created L1@42 N·2446 S·161KiB "\x02i\x17..b\xf6\xc6,v6422":"\xfe\xa2]..\xa6\xca\xc1,v6902"
-21:52:54.397087 table@compaction committed F-4 S-1KiB Ke·0 D·12 T·66.876996ms
-21:52:54.397168 table@remove removed @39
-21:52:54.397203 table@remove removed @36
-21:52:54.397229 table@remove removed @33
-21:52:54.397256 table@remove removed @30
-21:52:54.397308 table@remove removed @29
-21:53:29.903613 db@close closing
-21:53:29.903757 db@close done T·134.05µs
+=============== Nov 21, 2015 (CST) ===============
+00:25:40.002157 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:25:40.002439 db@open opening
+00:25:40.002519 journal@recovery F·1
+00:25:40.003121 journal@recovery recovering @86
+00:25:40.033614 mem@flush created L0@88 N·3 S·266B "blo..um-,v7109":"\xc5\xd2F..\x85\xa4p,v7107"
+00:25:40.034186 db@janitor F·6 G·0
+00:25:40.034510 db@open done T·31.775507ms

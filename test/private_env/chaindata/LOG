@@ -1,8 +1,16 @@
-=============== Nov 19, 2015 (CST) ===============
-22:02:06.263050 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-22:02:06.263253 db@open opening
-22:02:06.263371 journal@recovery F·1
-22:02:06.263786 journal@recovery recovering @40
-22:02:06.290834 mem@flush created L0@43 N·3 S·266B "blo..um-,v7053":"\xc5\xd2F..\x85\xa4p,v7051"
-22:02:06.292414 db@janitor F·4 G·0
-22:02:06.292438 db@open done T·29.171473ms
+=============== Nov 21, 2015 (CST) ===============
+00:27:04.689995 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:27:04.690131 db@open opening
+00:27:04.690168 journal@recovery F·1
+00:27:04.690266 journal@recovery recovering @89
+00:27:04.717989 mem@flush created L0@91 N·3 S·266B "blo..um-,v7113":"\xc5\xd2F..\x85\xa4p,v7111"
+00:27:04.718525 db@janitor F·7 G·0
+00:27:04.718550 db@open done T·28.408923ms
+00:27:04.718619 table@compaction L0·4 -> L1·1 S·162KiB Q·7114
+00:27:04.785288 table@build created L1@94 N·2446 S·161KiB "\x02i\x17..b\xf6\xc6,v6422":"\xfe\xa2]..\xa6\xca\xc1,v6902"
+00:27:04.819001 table@compaction committed F-4 S-1KiB Ke·0 D·12 T·100.307448ms
+00:27:04.819074 table@remove removed @91
+00:27:04.819103 table@remove removed @88
+00:27:04.819124 table@remove removed @85
+00:27:04.819142 table@remove removed @82
+00:27:04.819204 table@remove removed @81
