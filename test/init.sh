@@ -14,7 +14,7 @@
 # Followed from this guide: http://adeduke.com/2015/08/how-to-create-a-private-ethereum-chain/
 # ----
 # For subsequent use, this command is all you need
-#(geth --genesis ./private_env/genesis.json --datadir ./private_env --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --maxpeers 0 > ./log.txt 2>&1) &
+(geth --genesis ./private_env/genesis.json --datadir ./private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --maxpeers 0 --unlock 0 --password ./private_env/password.txt > ./log.txt 2>&1) &
 
 
 
@@ -42,5 +42,5 @@ curl --silent -X POST --data "${deploy}" localhost:2060 | grep ''
 
 
 # Kill the geth daemon
-#pkill geth
+pkill geth
 

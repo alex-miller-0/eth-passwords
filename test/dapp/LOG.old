@@ -1,7 +1,0 @@
-=============== Nov 21, 2015 (CST) ===============
-00:01:32.348829 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-00:01:32.348902 db@open opening
-00:01:32.348952 journal@recovery F·1
-00:01:32.349376 journal@recovery recovering @1
-00:01:32.349815 db@janitor F·2 G·0
-00:01:32.349831 db@open done T·922.474µs
