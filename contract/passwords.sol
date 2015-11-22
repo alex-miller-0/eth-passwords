@@ -6,6 +6,11 @@ contract Password {
     // An array of identifier strings to use when getting a password
     bytes32[] public Identifiers;
 
+    // testing
+    function test(uint32 x) returns (uint32) {return x+1;}
+
+
+
     // Add an identifier to the array  
     function create(address _user_address, bytes32 _identifier, bytes32 _seed){
         if (sha3(_user_address,_seed) == Seed){

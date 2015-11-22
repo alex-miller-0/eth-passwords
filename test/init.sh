@@ -14,8 +14,11 @@
 # Followed from this guide: http://adeduke.com/2015/08/how-to-create-a-private-ethereum-chain/
 # ----
 # For subsequent use, this command is all you need
-(geth --genesis ./private_env/genesis.json --datadir ./private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --maxpeers 0 --unlock 0 --password ./private_env/password.txt > ./log.txt 2>&1) &
-
+(geth --genesis ./private_env/genesis.json --datadir ./private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --mine --minerthreads 8 --maxpeers 0 --unlock 0 --password ./private_env/password.txt > ./log.txt 2>&1) &
+# Give geth a few seconds to boot up
+printf "\nTESTING CONTRACT DEPLOYMENT\n============================\n\n"
+echo "Booting private blockchain..."
+sleep 1
 
 
 # Remove line breaks and comments from the contract
@@ -32,13 +35,39 @@ contract="$prefix$hex";
 
 # Get primary account address
 primary=$(curl --silent -X POST --data '{"jsonrpc":"2.0.", "method":"eth_accounts", "params":[], "id":1}' localhost:2060 | grep '' | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result'][0];");
-echo $primary
-# Unlock account
-unlock='{"jsonrpc":"2.0", "method":}'
+printf "Primary account: ${primary}\n"
 
 # Deploy the contract
 deploy='{"jsonrpc":"2.0","method":"eth_sendTransaction", "params":[{"from":"'${primary}'", "data":"'${contract}'"}], "id":1}'
-curl --silent -X POST --data "${deploy}" localhost:2060 | grep ''
+contract_address=$(curl --silent -X POST --data "${deploy}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
+printf "Deployed contract to address: ${contract_address} \n\n"
+
+echo "Mining for a few seconds..."
+sleep 5
+
+# Test calling the contract
+# 1) Get the first 4 bytes of the SHA3 hash of the function definition
+test="test(uint32 x)";
+get_method='{"jsonrpc":"2.0", "method":"web3_sha3", "params":["'${test}'"], "id":3}'
+#echo $get_method;
+method_id=$(curl --silent -X POST --data "${get_method}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']");
+#echo $method_id
+# The output is a hash, but it is represented as a string. Parse it with xxd and then reconvert only the first 4 bytes to hex with xxd.
+first_four=$(printf "\x${method_id}" | xxd -r -p | xxd -l 4 -p)
+#echo $first_four
+
+# 2) Append the hex values of the parameters you are passing to the hex generated in 1)
+# Just use the number 7 here. Figure out how to pad it into a 32 bit int later
+var="0000000000000000000000000000000000000000000000000000000000000007"
+
+# 3) Use RPC eth_call with the above hex as the "data" param
+echo "RPC eth_call to method ${test}..."
+contract_call="0x${first_four}${var}"
+call_contract='{"jsonrpc":"2.0", "method":"eth_call", "params":[{"to":"'${contract_address}'", "from":"'${primary}'", "data":"'${contract_call}'"}], "id":3}'
+call_return=$(curl --silent -X POST --data "${call_contract}" localhost:2060); #| python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']");
+
+echo $call_return
+printf "\n\n"
 
 
 # Kill the geth daemon
