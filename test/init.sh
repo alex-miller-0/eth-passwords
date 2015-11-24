@@ -18,16 +18,15 @@
 # Give geth a few seconds to boot up
 printf "\nTESTING CONTRACT DEPLOYMENT\n============================\n\n"
 echo "Booting private blockchain..."
-sleep 1
+sleep 5
 
 
 # Remove line breaks and comments from the contract
-#sed '/\/\//d' ./../contract/passwords.sol | tr '\n' ' ' > ./solc_compile/Password.sol
-one_liner="$(sed '/\/\//d' ./../contract/passwords.sol | tr '\n' ' ' | grep "")";
+one_liner="$(sed '/\/\//d' ./../contract/test.sol | tr '\n' ' ' | grep "")";
 
 # Compile to hex binary
 compile='{"jsonrpc":"2.0","method":"eth_compileSolidity", "params":["'${one_liner}'"], "id":1}';
-hex=$(curl --silent -X POST --data "${compile}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']['Password']['code'];");
+hex=$(curl --silent -X POST --data "${compile}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']['SimpleStorage']['code'];");
 
 # Form a string of the bytecode
 prefix="0x";
@@ -37,13 +36,35 @@ contract="$prefix$hex";
 primary=$(curl --silent -X POST --data '{"jsonrpc":"2.0.", "method":"eth_accounts", "params":[], "id":1}' localhost:2060 | grep '' | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result'][0];");
 printf "Primary account: ${primary}\n"
 
-# Deploy the contract
-deploy='{"jsonrpc":"2.0","method":"eth_sendTransaction", "params":[{"from":"'${primary}'", "data":"'${contract}'"}], "id":1}'
-contract_address=$(curl --silent -X POST --data "${deploy}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
-printf "Deployed contract to address: ${contract_address} \n\n"
+# Deploy the contract (and get the txn hash
 
+# Override defaults for gas and gas price to higher values (I think these are high enough...)
+# Note; therse are encoded with RLP (using pyrlp package); check out http://vitalik.ca/ethereum/rlp.html
+# TODO roll an RLP method in C
+gas="8301[a8"
+gasprice="9184e72a000"
+
+deploy='{"jsonrpc":"2.0","method":"eth_sendTransaction", "params":[{"from":"'${primary}'", "data":"'${contract}'","gas":"0x'${gas}'","gasPrice":"0x'${gasprice}'"}], "id":1}'
+echo $deploy
+contract_txn=$(curl --silent -X POST --data "${deploy}" localhost:2060 |  python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
+echo $contract_txn
+echo "Deployed contract..."
 echo "Mining for a few seconds..."
-sleep 5
+sleep 10
+
+# Get the address of the contract
+get_address='{"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["'${contract_txn}'"], "id":1}'
+contract_receipt=$(curl --silent -X POST --data "${get_address}" localhost:2060 | grep '')
+echo $contract_receipt
+contract_address=$(echo $contract_receipt | python -c "import json,sys; obj=json.load(sys.stdin);print obj['result']['contractAddress'];");
+block_no=$(echo $contract_receipt | python -c "import json,sys; obj=json.load(sys.stdin);print obj['result']['blockNumber'];");
+printf "Contract Address: ${contract_address} \n"
+printf "Contract Block Number: ${block_no} \n"
+# Make sure the contract is deployed (i.e. is not "0x")
+check_deployed='{"jsonrpc":"2.0", "method":"eth_getCode", "params":["'${contract_address}'", "pending"], "id":1}'
+deployed_code=$(curl --silent -X POST --data "${check_deployed}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
+printf "Deployed code: ${deployed_code} \n"
+
 
 # Test calling the contract
 # 1) Get the first 4 bytes of the SHA3 hash of the function definition
@@ -63,9 +84,9 @@ var="0000000000000000000000000000000000000000000000000000000000000007"
 # 3) Use RPC eth_call with the above hex as the "data" param
 echo "RPC eth_call to method ${test}..."
 contract_call="0x${first_four}${var}"
-call_contract='{"jsonrpc":"2.0", "method":"eth_call", "params":[{"to":"'${contract_address}'", "from":"'${primary}'", "data":"'${contract_call}'"}], "id":3}'
-call_return=$(curl --silent -X POST --data "${call_contract}" localhost:2060); #| python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']");
-
+call_contract='{"jsonrpc":"2.0", "method":"eth_call", "params":[{"to":"'${contract_address}'", "from":"'${primary}'", "data":"'${contract_call}'"}, "latest"], "id":3}'
+call_return=$(curl -X POST --data "${call_contract}" localhost:2060); #| python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']");
+echo $call_contract
 echo $call_return
 printf "\n\n"
 
