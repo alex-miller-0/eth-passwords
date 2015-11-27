@@ -1,39 +1,49 @@
-I1126 23:43:00.652170   14098 database.go:71] Alloted 16MB cache to private_chain/chaindata
-I1126 23:43:00.712072   14098 database.go:71] Alloted 16MB cache to private_chain/dapp
-I1126 23:43:00.715255   14098 backend.go:314] Protocol Versions: [63 62 61], Network Id: 257291
-I1126 23:43:00.715505   14098 genesis.go:89] Genesis block already in chain. Writing canonical number
-I1126 23:43:00.715526   14098 backend.go:326] Successfully wrote genesis block. New genesis hash = d8b14815479c7b1c6c1158542396e70ce8dc4b05c734140a7793e62470b4732e
-I1126 23:43:00.715583   14098 backend.go:362] Blockchain DB Version: 3
-I1126 23:43:00.715852   14098 blockchain.go:214] Last header: #4137 [dcbeab63…] TD=1649054430
-I1126 23:43:00.715864   14098 blockchain.go:215] Last block: #4137 [dcbeab63…] TD=1649054430
-I1126 23:43:00.715870   14098 blockchain.go:216] Fast block: #4137 [dcbeab63…] TD=1649054430
-I1126 23:43:00.719454   14098 cmd.go:114] Starting Geth/v1.3.2/linux/go1.5.1
-I1126 23:43:00.719503   14098 server.go:311] Starting Server
-I1126 23:43:00.719573   14098 backend.go:526] Server started
-I1126 23:43:00.719698   14098 backend.go:584] Automatic pregeneration of ethash DAG ON (ethash dir: /home/alex/.ethash)
-I1126 23:43:00.719714   14098 server.go:552] Listening on [::]:30303
-I1126 23:43:00.721251   14098 backend.go:591] checking DAG (ethash dir: /home/alex/.ethash)
+I1127 13:22:21.537590    7159 database.go:71] Alloted 16MB cache to private_chain/chaindata
+I1127 13:22:21.602963    7159 database.go:71] Alloted 16MB cache to private_chain/dapp
+I1127 13:22:21.603718    7159 backend.go:314] Protocol Versions: [63 62 61], Network Id: 257291
+I1127 13:22:21.604330    7159 genesis.go:89] Genesis block already in chain. Writing canonical number
+I1127 13:22:21.604353    7159 backend.go:326] Successfully wrote genesis block. New genesis hash = d8b14815479c7b1c6c1158542396e70ce8dc4b05c734140a7793e62470b4732e
+I1127 13:22:21.604408    7159 backend.go:362] Blockchain DB Version: 3
+I1127 13:22:21.604636    7159 blockchain.go:214] Last header: #4148 [9ead6318…] TD=1658973187
+I1127 13:22:21.604648    7159 blockchain.go:215] Last block: #4148 [9ead6318…] TD=1658973187
+I1127 13:22:21.604653    7159 blockchain.go:216] Fast block: #4148 [9ead6318…] TD=1658973187
+I1127 13:22:21.608062    7159 cmd.go:114] Starting Geth/v1.3.2/linux/go1.5.1
+I1127 13:22:21.608113    7159 server.go:311] Starting Server
+I1127 13:22:21.608161    7159 backend.go:526] Server started
+I1127 13:22:21.608289    7159 server.go:552] Listening on [::]:30303
+I1127 13:22:21.608291    7159 backend.go:584] Automatic pregeneration of ethash DAG ON (ethash dir: /home/alex/.ethash)
+I1127 13:22:21.609789    7159 backend.go:591] checking DAG (ethash dir: /home/alex/.ethash)
 Account '0' (0x3ce10c3273b83981ad81467dbd39af525405ea54) unlocked.
-I1126 23:43:01.564001   14098 ipc.go:112] IPC service started (private_chain/geth.ipc)
-I1126 23:43:01.564040   14098 miner.go:119] Starting mining operation (CPU=8 TOT=9)
-I1126 23:43:01.564338   14098 worker.go:570] commit new work on block 4138 with 0 txs & 0 uncles. Took 273.314µs
-I1126 23:43:01.564583   14098 ethash.go:220] Generating DAG for epoch 0 (size 1073739904) (0000000000000000000000000000000000000000000000000000000000000000)
-I1126 23:43:02.511353   14098 ethash.go:237] Done generating DAG for epoch 0, it took 946.76603ms
-I1126 23:43:05.625666   14098 solidity.go:114] solc, the solidity compiler commandline interface
+I1127 13:22:22.427598    7159 miner.go:119] Starting mining operation (CPU=8 TOT=9)
+I1127 13:22:22.427643    7159 ipc.go:112] IPC service started (private_chain/geth.ipc)
+I1127 13:22:22.427888    7159 worker.go:570] commit new work on block 4149 with 0 txs & 0 uncles. Took 253.96µs
+I1127 13:22:22.428105    7159 ethash.go:220] Generating DAG for epoch 0 (size 1073739904) (0000000000000000000000000000000000000000000000000000000000000000)
+I1127 13:22:23.377287    7159 ethash.go:237] Done generating DAG for epoch 0, it took 949.17939ms
+I1127 13:22:26.622165    7159 solidity.go:114] solc, the solidity compiler commandline interface
 Version: 0.1.6-0/Release-Linux/g++/int linked to libethereum-0.9.93-0/Release-Linux/g++/int
 
 path: /usr/bin/solc
-I1126 23:43:05.635998   14098 worker.go:349] 🔨  Mined block (#4138 / 269ecdce). Wait 5 blocks for confirmation
-I1126 23:43:05.636216   14098 worker.go:570] commit new work on block 4139 with 0 txs & 0 uncles. Took 194.02µs
-I1126 23:43:05.639610   14098 worker.go:349] 🔨  Mined stale block (#4138 / cf70cca7). 
-I1126 23:43:05.639764   14098 worker.go:570] commit new work on block 4139 with 0 txs & 0 uncles. Took 133.875µs
-I1126 23:43:05.666577   14098 worker.go:349] 🔨  Mined stale block (#4138 / 78733a83). 
-I1126 23:43:05.666842   14098 worker.go:570] commit new work on block 4139 with 0 txs & 0 uncles. Took 230.225µs
-I1126 23:43:05.704726   14098 worker.go:570] commit new work on block 4139 with 0 txs & 0 uncles. Took 978.357µs
-I1126 23:43:05.719112   14098 xeth.go:1026] Tx(0xedffed0f6fd8b766d35c28f46cee4e6a8b1a1ffdf06fe1ca8902ff455c6ef903) created: 0x8d8570e132d83c612a1b14a8b8d25f2229f3770e
-I1126 23:43:11.139974   14098 worker.go:349] 🔨  Mined block (#4139 / 24bbcb53). Wait 5 blocks for confirmation
-I1126 23:43:11.140584   14098 worker.go:570] commit new work on block 4140 with 1 txs & 0 uncles. Took 572.455µs
-I1126 23:43:11.218098   14098 worker.go:570] commit new work on block 4140 with 1 txs & 0 uncles. Took 2.752149ms
-I1126 23:43:11.967457   14098 worker.go:349] 🔨  Mined block (#4140 / 340a3111). Wait 5 blocks for confirmation
-I1126 23:43:11.967757   14098 worker.go:570] commit new work on block 4141 with 0 txs & 0 uncles. Took 260.844µs
-I1126 23:43:12.008880   14098 worker.go:570] commit new work on block 4141 with 0 txs & 0 uncles. Took 373.149µs
+I1127 13:22:26.835925    7159 xeth.go:1026] Tx(0xbefc7609395e3f1ffd4485c8682648832b72cdea14914743003403f00dc59ad1) created: 0xfdaa596549d8690eb45694982c9300b844a4e8a0
+I1127 13:22:27.054784    7159 worker.go:349] 🔨  Mined block (#4149 / b9125ccf). Wait 5 blocks for confirmation
+I1127 13:22:27.055273    7159 worker.go:570] commit new work on block 4150 with 1 txs & 0 uncles. Took 461.731µs
+I1127 13:22:27.055920    7159 worker.go:570] commit new work on block 4150 with 1 txs & 0 uncles. Took 551.901µs
+I1127 13:22:28.369885    7159 worker.go:349] 🔨  Mined block (#4150 / 99ff9e27). Wait 5 blocks for confirmation
+I1127 13:22:28.370169    7159 worker.go:570] commit new work on block 4151 with 0 txs & 0 uncles. Took 249.796µs
+I1127 13:22:28.370415    7159 worker.go:570] commit new work on block 4151 with 0 txs & 0 uncles. Took 168.49µs
+I1127 13:22:28.581345    7159 worker.go:349] 🔨  Mined block (#4151 / 1544651f). Wait 5 blocks for confirmation
+I1127 13:22:28.581639    7159 worker.go:570] commit new work on block 4152 with 0 txs & 0 uncles. Took 260.783µs
+I1127 13:22:28.581961    7159 worker.go:570] commit new work on block 4152 with 0 txs & 0 uncles. Took 204.455µs
+I1127 13:22:32.005834    7159 worker.go:349] 🔨  Mined block (#4152 / 9227e754). Wait 5 blocks for confirmation
+I1127 13:22:32.006038    7159 worker.go:570] commit new work on block 4153 with 0 txs & 0 uncles. Took 179.512µs
+I1127 13:22:32.114519    7159 worker.go:570] commit new work on block 4153 with 0 txs & 0 uncles. Took 1.832286ms
+I1127 13:22:32.644803    7159 worker.go:349] 🔨  Mined block (#4153 / 60f6e19d). Wait 5 blocks for confirmation
+I1127 13:22:32.645094    7159 worker.go:570] commit new work on block 4154 with 0 txs & 0 uncles. Took 257.089µs
+I1127 13:22:32.645430    7159 worker.go:570] commit new work on block 4154 with 0 txs & 0 uncles. Took 214.283µs
+I1127 13:22:33.929851    7159 worker.go:349] 🔨  Mined block (#4154 / 42d172b6). Wait 5 blocks for confirmation
+I1127 13:22:33.930148    7159 worker.go:570] commit new work on block 4155 with 0 txs & 0 uncles. Took 257.866µs
+I1127 13:22:33.930170    7159 worker.go:448] 🔨 🔗  Mined 5 blocks back: block #4149
+I1127 13:22:34.026261    7159 worker.go:570] commit new work on block 4155 with 0 txs & 0 uncles. Took 566.566µs
+I1127 13:22:34.660444    7159 worker.go:349] 🔨  Mined block (#4155 / e8070811). Wait 5 blocks for confirmation
+I1127 13:22:34.660735    7159 worker.go:570] commit new work on block 4156 with 0 txs & 0 uncles. Took 256.487µs
+I1127 13:22:34.660756    7159 worker.go:448] 🔨 🔗  Mined 5 blocks back: block #4150
+I1127 13:22:34.747649    7159 worker.go:570] commit new work on block 4156 with 0 txs & 0 uncles. Took 324.316µs

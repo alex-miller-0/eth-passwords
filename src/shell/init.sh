@@ -1,5 +1,4 @@
-#debug
-#set -vx
+input_contract=$1;
 
 # Deploy the contract on a private blockchain for testing
 ########################################################
@@ -14,24 +13,24 @@
 # Followed from this guide: http://adeduke.com/2015/08/how-to-create-a-private-ethereum-chain/
 # ----
 # For subsequent use, this command is all you need
-(geth --genesis ./private_env/genesis.json --datadir ./private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --mine --minerthreads 8 --maxpeers 2 --unlock 0 --password ./private_env/password.txt > ./log.txt 2>&1) &
+
+(geth --genesis ./../test/private_env/genesis.json --datadir ./../test/private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --mine --minerthreads 8 --maxpeers 2 --unlock 0 --password ./../test/private_env/password.txt > ./log.txt 2>&1) &
+
 # Give geth a few seconds to boot up
-printf "\nTESTING CONTRACT DEPLOYMENT\n============================\n\n"
-echo "Booting private blockchain..."
 sleep 5
 
-
 # Remove line breaks and comments from the contract
-one_liner="$(sed '/\/\//d' ./../contract/passwords.sol | tr '\n' ' ' | grep "")";
+#one_liner="$(sed '/\/\//d' ./../contract/passwords.sol | tr '\n' ' ' | grep "")";
 
 # Compile to hex binary
-compile='{"jsonrpc":"2.0","method":"eth_compileSolidity", "params":["'${one_liner}'"], "id":1}';
+compile='{"jsonrpc":"2.0","method":"eth_compileSolidity", "params":["'${input_contract}'"], "id":1}';
+
 contract_info=$(curl --silent -X POST --data "${compile}" localhost:2060)
+
 contract=$(echo $contract_info | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']['Password']['code'];");
 
 # Get primary account address
 primary=$(curl --silent -X POST --data '{"jsonrpc":"2.0.", "method":"eth_accounts", "params":[], "id":2}' localhost:2060 | grep '' | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result'][0];");
-printf "Primary account: ${primary}\n"
 
 # Deploy the contract (and get the txn hash
 
@@ -41,60 +40,46 @@ printf "Primary account: ${primary}\n"
 gas='100000'
 gasprice='10000000000000'
 
+# Send the transaction with the contract as the data
 deploy='{"jsonrpc":"2.0","method":"eth_sendTransaction", "params":[{"from":"'${primary}'", "data":"'${contract}'","gas":"0x'${gas}'","gasPrice":"0x'${gasprice}'"}], "id":3}'
 contract_txn=$(curl --silent -X POST --data "${deploy}" localhost:2060 |  python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
-echo "Deployed contract..."
-echo "Mining for a few seconds..."
+
 sleep 8
 
-# Get the address of the contract
+# Get the address of the contract from the transaction receipt
 get_address='{"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["'${contract_txn}'"], "id":4}'
 contract_receipt=$(curl --silent -X POST --data "${get_address}" localhost:2060 | grep '')
 contract_address=$(echo $contract_receipt | python -c "import json,sys; obj=json.load(sys.stdin);print obj['result']['contractAddress'];");
 block_no=$(echo $contract_receipt | python -c "import json,sys; obj=json.load(sys.stdin);print obj['result']['blockNumber'];");
-printf "Contract Address: ${contract_address} \n"
-printf "Contract Block Number: ${block_no} \n"
 
 # Make sure the contract is deployed (i.e. is not "0x")
 check_deployed='{"jsonrpc":"2.0", "method":"eth_getCode", "params":["'${contract_address}'", "'${block_no}'"], "id":5}'
 deployed_code=$(curl --silent -X POST --data "${check_deployed}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
 if [ ${#deployed_code} > 2 ]; then
-    echo "Contract code deployed successfully."
+    echo $contract_address
 else
-    echo "Contract code deployment FAILED"
-    pkill geth
-    exit
+    echo 0
 fi
 
-# Pad a hex string with leading zeros up to 32 bytes
-function to_byte32 {
-    printf "%064d" $1
-}
+# Kill geth and exit
+pkill geth
+exit
 
 
-printf "\n\nTESTING CONTRACT CALL\n==============================\n\n"
 
-# Test calling the contract
-# 1) Get the first 4 bytes of the SHA3 hash of the function definition
-test="multiply(uint256)";
-get_method='{"jsonrpc":"2.0", "method":"web3_sha3", "params":["'${test}'"], "id":6}'
-#method_id=$(curl --silent -X POST --data "${get_method}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']");
 
-# The output is a hash, but it is represented as a string. Parse it with xxd and then reconvert only the first 4 bytes to hex with xxd.
-#first_four=$(printf "\x${method_id}" | xxd -r -p | xxd -l 4 -p)
+
 
 
 ### NOTE: RPC API call (web3_sha3) returns a different value than using web3.sha3 on the geth console... WTF?
 # Will hard code for now (since contract code shouldn't change, but still wtf?
-first_four="1676928c"
-
+first_four="39e7357c"
 
 # 2) Append the hex values of the parameters you are passing to the hex generated in 1)
 # Just use the number 7 here. Figure out how to pad it into a 32 bit int later
 #var="0000000000000000000000000000000000000000000000000000000000000007"
+var=""
 
-# 3) Use RPC eth_call with the above hex as the "data" param
-echo "RPC eth_call to method ${test}..."
 
 #contract_call="0x${first_four}${var}"
 contract_call="0x${first_four}"
