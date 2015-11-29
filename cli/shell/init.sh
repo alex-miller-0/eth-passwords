@@ -14,7 +14,7 @@ input_contract=$1;
 # ----
 # For subsequent use, this command is all you need
 
-(geth --genesis ./../test/private_env/genesis.json --datadir ./../test/private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --mine --minerthreads 8 --maxpeers 2 --unlock 0 --password ./../test/private_env/password.txt > ./log.txt 2>&1) &
+(geth --genesis ./../test/private_env/genesis.json --datadir ./../test/private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --mine --minerthreads 8 --maxpeers 2 --unlock 0 --password ./../test/private_env/password.txt > ./../test/log.txt 2>&1) &
 
 # Give geth a few seconds to boot up
 sleep 5
