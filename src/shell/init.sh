@@ -64,33 +64,3 @@ fi
 # Kill geth and exit
 pkill geth
 exit
-
-
-
-
-
-
-
-### NOTE: RPC API call (web3_sha3) returns a different value than using web3.sha3 on the geth console... WTF?
-# Will hard code for now (since contract code shouldn't change, but still wtf?
-first_four="39e7357c"
-
-# 2) Append the hex values of the parameters you are passing to the hex generated in 1)
-# Just use the number 7 here. Figure out how to pad it into a 32 bit int later
-#var="0000000000000000000000000000000000000000000000000000000000000007"
-var=""
-
-
-#contract_call="0x${first_four}${var}"
-contract_call="0x${first_four}"
-call_contract='{"jsonrpc":"2.0", "method":"eth_call", "params":[{"to":"'${contract_address}'", "from":"'${primary}'", "data":"'${contract_call}'"}], "id":7}'
-echo $call_contract
-
-call_return=$(curl --silent -X POST --data "${call_contract}" localhost:2060) #| python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']");
-echo $call_return
-#printf "\n\n"
-
-
-# Kill the geth daemon
-pkill geth
-
