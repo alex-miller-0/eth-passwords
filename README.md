@@ -24,7 +24,13 @@ Once these steps are carried out, you have a few more RESTful options.
 * Get a specific password given the above identity and your root password
 * Delete a speciffic password given the above identity and your root password
 
+## Command Line Flags
+Use the following flags to manage your passwords:
+
+**-i \<seed\>** initializes a new contract with the seed (i.e. master password) argument. Further interaction with the contract will require this seed, so don't forget it.
+
+**-m \<method_title\>** calls one of the methods in the deployed contract. 
+
 ### TODO:
-- Finish testing workflow
-- Figure out how to concatenate identifiers array in solididy
-- Script to spin up new instance of contract (for a new account)
+- Finish all the methods
+- Figure out how to concatenate identifiers array in solididy (it needs to return these)
