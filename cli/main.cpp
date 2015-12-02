@@ -6,13 +6,15 @@
 #include <sstream>
 #include <iostream>
 
+// Functions for dealing with contracts
 #include "src/contracts.h"
+
 using namespace std;
 
 
 
 // Deploy a contract to the block chain
-int deploy_contract(char* arg){
+/*int deploy_contract(char* arg){
     // Build the contract and use it as an argument to the bash init script
     string shell_init = "shell/init.sh \"" + build_contract(arg) + "\"";       
     const char* shell_init_command = shell_init.c_str();
@@ -21,13 +23,13 @@ int deploy_contract(char* arg){
     FILE *fp = popen(shell_init_command, "r");
     char buf[1024];
     ofstream faddress;
-    faddress.open ("./.store/address");
+    faddress.open("./.store/address");
     while (fgets(buf, 1024, fp)) {faddress << buf;}
     faddress.close();
     fclose(fp);
 
     cout << "Done.\n";
-}
+}*/
 
 string call_contract(char* method){
     // Get the first four bytes of the method header
@@ -58,6 +60,12 @@ int main(int argc, char* argv[]) {
     string method_id = "0x";
     for (int i=1; i<argc; i++){
         string arg = argv[i];
+        // If this is a test, spin up a geth instance
+        if(arg== "--test"){
+            system("(geth --genesis ./../test/private_env/genesis.json --datadir ./../test/private_chain --rpc --rpcport 2060 --networkid 257291 --unlock primary --nodiscover --mine --minerthreads 8 --maxpeers 2 --unlock 0 --password ./../test/private_env/password.txt > ./../test/log.txt 2>&1) &");
+            system("sleep 1");
+        }
+
         // Get the method header
         if(arg == "-m"){
             cout << "Calling method... \n";
@@ -67,10 +75,12 @@ int main(int argc, char* argv[]) {
         // Create and initialize the contract
         if(arg == "-i"){
             cout << "Initializing new contract... ";
-            deploy_contract(argv[i+1]);
+            string contract = build_contract(argv[i+1]);
+            deploy_contract(contract, "Password", "2060");
         }
-
     }
+    // Kill geth
+    system("pkill geth");
     
     // Build the contract using a seed
     //string x = build_contract("42");
