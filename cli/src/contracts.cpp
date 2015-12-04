@@ -58,8 +58,8 @@ string shell(string _request){
 //===============================================================================
 
 // Make an rpc call to the blockchain that is currently running
-const char* rpc_call(string method, string params, string port){
-    string json="\'{\"jsonrpc\":\"2.0\",\"method\":\""+method+"\", \"params\":[\""+params+"\"], \"id\":1}\'";
+rapidjson::Value& rpc_call(string method, string params, string port){
+    string json="\'{\"jsonrpc\":\"2.0\",\"method\":\""+method+"\", \"params\":["+params+"], \"id\":1}\'";
     
     // Get the first four bytes of the method header (static string)
     string first_four = get_first_four(method);    
@@ -68,11 +68,20 @@ const char* rpc_call(string method, string params, string port){
 
     // Build the request
     string request = "curl --silent -X POST --data " +json+ " localhost:"+port;
-    cout << request + "\n\n";
-
     string _response = shell(request);
     const char* response = _response.c_str();
-    return response;
+
+    // Instantiate JSON parser
+    rapidjson::Document d;
+    d.Parse(response);
+    
+    // Assert that d is an object
+    // TODO throw an exception so this doesn't crash the whole process
+    assert (d.IsObject());
+
+    rapidjson::Value& return_response = d["result"];
+
+    return return_response;
 }
 
 //===============================================================================
@@ -81,7 +90,7 @@ const char* rpc_call(string method, string params, string port){
 
 // Build the Password contract before deploying
 string build_contract(char* seed){
-    string contract = "contract Password {";
+    string contract = "\"contract Password {";
     // Global vars
     contract += "bytes32 Seed="+to_bytes32(seed)+";";
     contract += "bytes32[] public Identifiers;";
@@ -100,7 +109,7 @@ string build_contract(char* seed){
     //contract += "function returnHash(address _user_address, bytes32 _seed, bytes32 _identifier) returns (bytes32 hash){return sha3(_user_address, _seed, _identifier);}";
     //contract += "function fReturn(string to_return) returns (string) {return to_return;}";
     
-    contract += "}";
+    contract += "}\"";
     
     return contract;
 }
@@ -108,52 +117,63 @@ string build_contract(char* seed){
 //===============================================================================
 // DEPLOYING THE CONTRACT
 //===============================================================================
-string deploy_contract(string contract, string contractName, string port){
+// Redirect output (i.e. address of contract) to a file
+bool write_contract_address(string address){
+    try {
+        ofstream f("./.store/address");
+        f << address;
+        f.close();
+        return 1;
+    } 
+    catch (int e) {return 0;}
+}
+
+
+bool deploy_contract(string contract, string contractName, string port){
+
     // Compile the contract
-    const char* compiled_contract = rpc_call("eth_compileSolidity", contract, port);
-    cout << "Compiled contract: \n";
-    cout << compiled_contract;
-    cout << "\n\n";
-    
-    // Parse the json
-    rapidjson::Document d;
-    d.Parse(compiled_contract);
-    rapidjson::Value& s = d["result"];
-    string code = s["Password"]["code"].GetString();
-    cout << code;
+    rapidjson::Value& compiled_contract = rpc_call("eth_compileSolidity", contract, port);
+    string code = compiled_contract["Password"]["code"].GetString();
 
     // Get primary account address
-//primary=$(curl --silent -X POST --data '{"jsonrpc":"2.0.", "method":"eth_accounts", "params":[], "id":2}' localhost:2060 | grep '' | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result'][0];");
-/*
-    # Deploy the contract (and get the txn hash
+    rapidjson::Value& primary_address = rpc_call("eth_accounts", "", port);
+    string address = primary_address[0].GetString();
+    
+    // Deploy the contract and get the txn hash
+    string deploy_data = "{\"from\":\""+address+"\", \"data\":\""+code+"\"}";
+    rapidjson::Value& deploy = rpc_call("eth_sendTransaction", deploy_data, port);
+    string txn = deploy.GetString();
 
-# Override defaults for gas and gas price to higher values (I think these are high enough...)
-# Note; therse are encoded with RLP (using pyrlp package); check out http://vitalik.ca/ethereum/rlp.html
-# TODO roll an RLP method in C
-gas='100000'
-gasprice='10000000000000'
+    // Wait 10 seconds for the contract to deploy (may need to change this to ~15 for live blockchain)
+    // TODO This fails sometimes (i.e. returns null and crashes rapidjson); throw an exception when that happens
+    cout << "Deploying contract ";
+    for (int i=0; i<10; i++){
+        system("sleep 1");
+        cout << "=" << flush;
+    }
+    cout << "\n";
 
-# Send the transaction with the contract as the data
-deploy='{"jsonrpc":"2.0","method":"eth_sendTransaction", "params":[{"from":"'${primary}'", "data":"'${contract}'","gas":"0x'${gas}'","gasPrice":"0x'${gasprice}'"}], "id":3}'
-contract_txn=$(curl --silent -X POST --data "${deploy}" localhost:2060 |  python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
+    // Get the address of the contract from the transaction receipt
+    rapidjson::Value& txn_receipt = rpc_call("eth_getTransactionReceipt", "\""+txn+"\"", port);
+    string txn_address = txn_receipt["contractAddress"].GetString();
+    string block_no = txn_receipt["blockNumber"].GetString();
+    ;
+    // Make sure the code was successfully deployed
+    rapidjson::Value& check_deployed = rpc_call("eth_getCode", "\""+txn_address+"\", \""+block_no+"\"", port);
+    string deployed = check_deployed.GetString();
 
-sleep 8
+    // If the code did not deploy, this will have returned "0x". Otherwise, it should return the full EVM code.
+    int len = deployed.size();
+    if (len > 2){
+        // Write the address to a file
+        bool written = write_contract_address(deployed);
+        if (written == 1){cout << "Contract deployed successfully!\n\n" << flush; return 1;}
+        else {return 0;}
+    }
+    else {
+        cout << "Contract deployment FAILED.\n" << flush;
+        return 0;
+    }
 
-# Get the address of the contract from the transaction receipt
-get_address='{"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["'${contract_txn}'"], "id":4}'
-contract_receipt=$(curl --silent -X POST --data "${get_address}" localhost:2060 | grep '')
-contract_address=$(echo $contract_receipt | python -c "import json,sys; obj=json.load(sys.stdin);print obj['result']['contractAddress'];");
-block_no=$(echo $contract_receipt | python -c "import json,sys; obj=json.load(sys.stdin);print obj['result']['blockNumber'];");
-
-# Make sure the contract is deployed (i.e. is not "0x")
-check_deployed='{"jsonrpc":"2.0", "method":"eth_getCode", "params":["'${contract_address}'", "'${block_no}'"], "id":5}'
-deployed_code=$(curl --silent -X POST --data "${check_deployed}" localhost:2060 | python -c "import json,sys;obj=json.load(sys.stdin);print obj['result']")
-if [ ${#deployed_code} > 2 ]; then
-    echo $contract_address
-else
-    echo 0
-fi*/
-
-     return "";
 }
 

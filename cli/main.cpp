@@ -13,24 +13,6 @@ using namespace std;
 
 
 
-// Deploy a contract to the block chain
-/*int deploy_contract(char* arg){
-    // Build the contract and use it as an argument to the bash init script
-    string shell_init = "shell/init.sh \"" + build_contract(arg) + "\"";       
-    const char* shell_init_command = shell_init.c_str();
-
-    // Redirect output (i.e. address of contract) to a file
-    FILE *fp = popen(shell_init_command, "r");
-    char buf[1024];
-    ofstream faddress;
-    faddress.open("./.store/address");
-    while (fgets(buf, 1024, fp)) {faddress << buf;}
-    faddress.close();
-    fclose(fp);
-
-    cout << "Done.\n";
-}*/
-
 string call_contract(char* method){
     // Get the first four bytes of the method header
     string first_four = get_first_four(method);    
@@ -74,9 +56,10 @@ int main(int argc, char* argv[]) {
 
         // Create and initialize the contract
         if(arg == "-i"){
-            cout << "Initializing new contract... ";
+            cout << "\n\nInitializing new contract... \n" << flush;
             string contract = build_contract(argv[i+1]);
-            deploy_contract(contract, "Password", "2060");
+            try { bool deployed = deploy_contract(contract, "Password", "2060"); }
+            catch (...) {cout << "caught an exception";}
         }
     }
     // Kill geth
