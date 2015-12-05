@@ -28,20 +28,23 @@ You also have a few more RESTful options that utilize the block chain:
 ## Command Line Flags
 Use the following flags to manage your passwords:
 
-**--test** uses the private blockchain included in the repo
+    Environments:
+    --test          Uses the private blockchain included in the repo
+    
+    Actions:
+     -i             Initializes and deploys a new contract. 
+                    Requires geth to be running with RPC enabled and an unlocked Ethereum account.
+    
+    Seed storage:
+    -s <arg>        Uses the argument as the seed value
+    -sw             Writes the seed (requires -s) to a local file
+    -sd             Deletes the seed file
+   
 
-**-i** initializes a new contract
+    TODO
+    -p <arg>        Uses the seed (arg) and a given password hash to output the real password
 
-TODO:
-**-s \<seed\>** uses the argument as the seed value
-
-**-sw** writes the seed (requires *-s*) to a local file
-
-**-sd** deletes the seed file
-
-**-p \<password_hash\>** uses the seed (requires *-s* or a seed file) and a given password hash to output the real password
-
-**-m \<method_title\>** calls one of the methods in the deployed contract. 
+    -m <arg>        Calls one of the methods in the deployed contract (arg = method title). 
 
 ### TODO:
 - Figure out how to get the contract address from a new computer
