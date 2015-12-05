@@ -12,8 +12,6 @@
 
 using namespace std;
 
-
-
 //===============================================================================
 // HELPER FUNCTIONS
 //===============================================================================
@@ -177,3 +175,26 @@ bool deploy_contract(string contract, string contractName, string port){
 
 }
 
+/*
+string call_contract(char* method){
+    // Get the first four bytes of the method header
+    string first_four = get_first_four(method);    
+    string vars = "";
+    string contract_address = get_contract_address();
+
+    // Build the command
+    string shell_call = "shell/call.sh \"0x"+first_four+vars+"\" \""+contract_address+"\"";
+    const char* shell_call_command = shell_call.c_str();
+
+    // Execute shell script
+    FILE *fp = popen(shell_call_command, "r");
+    char buf[1024];
+    ofstream fcall;
+    fcall.open("./.store/getSeed");
+    while(fgets(buf,1024, fp)) {cout << buf;}
+    fcall.close();
+    fclose(fp);
+
+    return "";
+}
+*/
