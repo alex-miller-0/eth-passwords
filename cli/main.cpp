@@ -95,6 +95,8 @@ int main(int argc, char* argv[]) {
         //call_contract(argv[i+1]);
     //}
 
+    // Encrypt a password
+    write_password("password", "seed", "hint");
 
 
     // Finalize and exit
