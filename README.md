@@ -1,8 +1,29 @@
 # eth-passwords
-A &#208;app to create and manage cryptographically secure passwords on the ethereum blockchain. This is a stab at a password manager that you can access anywhere from your ethereum account. It still requires a single master password, but can only be used if you unlock your ethereum account so hopefully that's secure. The passwords themselves are hashes, so the idea is that you will use your browser's "Save Password" option and if you switch computers you can recover the passwords from the ethereum blockchain.
+This is a &#208;app to create and manage cryptographically secure passwords on the ethereum blockchain. Deploy a contract and start adding passwords (SHA3 hashes) to the blockchain (along with hints so that you know which password is which). A master password (seed) is used locally to transform the password hashes (stored in the blockchain) into the true passwords you will use. You may keep this seed locally or just remember it.
 
+
+## Command Line Flags
+Use the following flags to manage your passwords:
+
+    Environments:
+    --test          Uses the private blockchain included in the repo
+    
+    Actions:
+     -i             Initializes and deploys a new contract. 
+                    Requires geth to be running with RPC enabled and an unlocked Ethereum account.
+    
+    Seed storage:
+    -s <arg>        Uses the argument as the seed value
+    -sw             Writes the seed (requires -s) to a local file
+    -sd             Deletes the seed file
+   
+
+    TODO
+    -p <arg>        Uses the seed (arg) and a given password hash to output the real password
+
+    -m <arg>        Calls one of the methods in the deployed contract (arg = method title).
 ## Components
-This is a &#208;app for managing passwords, which are themselves SHA3 hashes of your Ethereum address, a master password, and some identifier string (i.e. a clue to what you are making the password for).
+There are three main components in this repo.
 #### Contract
 The contract is written in Solidity and will be called to do any of the following: deploy a new contract (i.e. a password "wallet"), create a new password, retreive a password, delete a password, see all identifiers.
 #### Test Environment
@@ -25,23 +46,6 @@ You also have a few more RESTful options that utilize the block chain:
 * Get a specific password hash
 * Delete a speciffic password hash
 
-## Command Line Flags
-Use the following flags to manage your passwords:
-
-**--test** uses the private blockchain included in the repo
-
-**-i** initializes a new contract
-
-TODO:
-**-s \<seed\>** uses the argument as the seed value
-
-**-sw** writes the seed (requires *-s*) to a local file
-
-**-sd** deletes the seed file
-
-**-p \<password_hash\>** uses the seed (requires *-s* or a seed file) and a given password hash to output the real password
-
-**-m \<method_title\>** calls one of the methods in the deployed contract. 
 
 ### TODO:
 - Figure out how to get the contract address from a new computer
