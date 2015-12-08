@@ -1,6 +1,5 @@
 # eth-passwords
-This is a &#208;app to create and manage cryptographically secure passwords on the ethereum blockchain. Deploy a contract and start adding passwords (SHA3 hashes) to the blockchain (along with hints so that you know which password is which). A master password (seed) is used locally to transform the password hashes (stored in the blockchain) into the true passwords you will use. You may keep this seed locally or just remember it.
-
+This is a &#208;app to create and manage encrypted passwords on the ethereum blockchain so that you can always recover them. Deploy a contract and start adding encrypted passwords to the blockchain (along with hints so that you know which password is which). A master password (seed) is used locally to encrypt/decrypt passwords. Only encrypted passwords are stored on the blockchain.
 
 ## Command Line Flags
 Use the following flags to manage your passwords:
@@ -19,7 +18,7 @@ Use the following flags to manage your passwords:
    
 
     TODO
-    -p <arg>        Uses the seed (arg) and a given password hash to output the real password
+    -p <arg>        Uses the seed (arg) to encrypt a password
 
     -m <arg>        Calls one of the methods in the deployed contract (arg = method title).
 ## Components
@@ -37,14 +36,9 @@ The general idea (in progress) is this:
 
 1. Make sure you have an ethereum account. Spin up a geth instance with RPC enabled and unlock your account.
 2. Deploy a new contract. The address will be written to a local file.
-3. Use the CLI to generate a new password hash with a string serving as some clue to you about what the password will be used for. The CLI will upload the password hash to the block chain and will save it locally too.
+3. Use the CLI to generate a new password with a string serving as some clue to you about what the password will be used for. The CLI will encrypt the password and then upload it to the block chain (it will also save the encrypted password locally).
 
-At this point, you may use the CLI to view all of your password hashes. To get the *real* password, the CLI will combine the password hash of your choosing with your seed.
-
-You also have a few more RESTful options that utilize the block chain:
-* Get a list of all places you have passwords stored for (i.e. the strings you used to identify them when you initialized)
-* Get a specific password hash
-* Delete a speciffic password hash
+At this point, you may use the CLI to view all of your encrypted passwords locally or you may call the Ethereum contract to pull them down from the blockchain. You can also, at any time, delete or create a new password and deploy it to the blockchain.
 
 
 ### TODO:
