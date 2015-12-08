@@ -16,8 +16,9 @@ using namespace std;
 
 
 // Set a max password size to use with encryption functions
-static int MAX_PASSWORD_SIZE = 16;
-
+static int MAX_SEED_SIZE = 16;
+// Set a buffer size for encryption
+static int BUFFER_SIZE = 1024;
 
 
 //===============================================================================
@@ -27,83 +28,118 @@ static int MAX_PASSWORD_SIZE = 16;
 
 // Pad a string with trailing spaces to reach desired length
 string pad_string(string input, int size){
+	
 	if (input.size() >= size) {return input; }
 	else {
 		while (input.size() < size) { input += " "; }
 		return input;
 	}
+
+}
+
+// Check that the seed is long enough
+string check_seed(string seed){
+	
+	// If the seed is too large, exit the program
+	if ( seed.size() > MAX_SEED_SIZE ){
+		cout << "\nYour seed must be < 17 characters";
+		exit;
+	}
+	
+	// If the password is too small, pad it with spaces
+	else if ( seed.size() < MAX_SEED_SIZE ){ 
+		seed = pad_string(seed, MAX_SEED_SIZE); 
+	}
+
+	return seed;
+}
+
+
+// Convert a string to a char array
+void convert_string(string str, int size, unsigned char to_convert[]){
+	
+	const char* char_str= str.c_str();
+	strncpy( (char*) to_convert, char_str, size);
+
+} 
+
+
+// Decrypt the password using an algorithm that is complementary to the encryption
+string decrypt_password(unsigned char encrypted_password[], string seed){
+	
+	// Allocate the output buffer
+	unsigned char out_buffer[BUFFER_SIZE];
+
+
+	// Check the seed size
+	seed = check_seed(seed);
+
+
+	// Copy seed string to char array;
+	unsigned char key[seed.size()];
+
+
+	// Convert the seed to a char array and pass it to a oointer
+	memcpy( (char*) key, seed.c_str(), seed.size());
+
+
+	// Set AES key
+	AES_KEY dec_key; 
+
+
+	// Decrypt
+	AES_set_decrypt_key(key, 128, &dec_key);
+	AES_decrypt(encrypted_password, out_buffer, &dec_key);
+	printf("outbuffer: %s\n",out_buffer);
+
+
+    return "test";
 }
 
 
 // Encrypt a password with AES (TODO move to better encryption algorithm)
-// Key must be 
-// Password must be <= 16 characters
+// Key must be 16 characters
 void encrypt_password(string password, string seed, unsigned char output[]){
+
+	// Check seed size
+	seed = check_seed(seed);
 	
-	// Password must be <= 16 characters
-	int size = MAX_PASSWORD_SIZE;
-	// If the password is too large, return an error
-	if ( password.size() > size ){exit;}
-	
-	// If the password is too small, pad it with spaces
-	else if ( password.size() < size ){ password = pad_string(password, size); }
 
-	// Copy seed to unsigned char array
-	const char* c_seed = seed.c_str();
-	unsigned char KEY[size];
-	strncpy( (char*) KEY, c_seed ,size);
+	// Buffers for encryption
+	unsigned char in_buffer[BUFFER_SIZE];
+	unsigned char encrypted_buffer[BUFFER_SIZE];
+	unsigned char out_buffer[BUFFER_SIZE];
 
-	// Copy password to unsigned char array
-	const char* c_password = password.c_str();
-	unsigned char PASSWORD[size];
-	strncpy( (char*) PASSWORD, c_password, size);
 
-	// Set the buffer
-    unsigned char enc_out[1024];
+	// Copy seed string to char array;
+	unsigned char key[seed.size()];
 
-    // Instantiate the key
-    AES_KEY enc_key, dec_key;
 
-    // Encrypt the password with the key (a.k.a seed)
-    AES_set_encrypt_key(KEY, 256, &enc_key);
-    AES_encrypt(PASSWORD, enc_out, &enc_key);      
+	// Convert the seed to a char array and pass it to a oointer
+	memcpy( (char*) key, seed.c_str(), seed.size());
 
-    // De-pointer enc_out and copy it to the output
-    int size_of_enc = sizeof(enc_out);
-    unsigned char encrypted_password[1024];
-    for (int i=0; *(enc_out+i); i++){
-    	encrypted_password[i] = *(enc_out+i);
-    }
-    printf("encrypted: %s\n", encrypted_password);
 
-    // Copy the encrypted password to the output variable
-    output = encrypted_password;
+	// Start encryption
+	AES_KEY enc_key; 
+	AES_set_encrypt_key(key, 128, &enc_key);
+
+
+	// Copy password to buffer
+	memcpy( (char*) in_buffer, password.c_str(), password.size());
+	printf("inbuffer: %s\n",in_buffer);
+
+
+	// Encypt stream from inbuffer to encrypted buffer
+	AES_encrypt(in_buffer, encrypted_buffer, &enc_key);
+	printf("encryptedbuffer: %s\n", encrypted_buffer);
+
+
+	// Copy encrypted_buffer to output variable
+	for (long unsigned int i=0; i<sizeof(encrypted_buffer); i++){
+		output[i] = encrypted_buffer[i];
+	}
+
 }
-
-
-// Decrypt the password using a complementary algorithm (also AES for now)
-string decrypt_password(unsigned char encrypted_password[], string seed){
-	
-	// Copy seed to unsigned char array
-	const char* c_seed = seed.c_str();
-	unsigned char KEY[MAX_PASSWORD_SIZE];
-	strncpy( (char*) KEY, c_seed ,MAX_PASSWORD_SIZE);
-
-	// Instantiate the key
-	AES_KEY dec_key;
-
-	// Set the buffer
-	unsigned char dec_out[1024];
-
-	// Test decryption
-    AES_set_decrypt_key(KEY, 256, &dec_key);
-    AES_decrypt(encrypted_password, dec_out, &dec_key);
-    //AES_decrypt(enc_out, dec_out, &dec_key);
-    
-    printf("decrypted: %s\n\n", dec_out);
-    return "test";
-}
-
 
 
 
@@ -147,37 +183,17 @@ string get_seed(){
 bool write_password(string password, string seed, string hint){
 	
 	// Encrypt the password into an unsigned char array
-	unsigned char encrypted[16];
-	encrypt_password("shitstorm", "seed", encrypted);
+	unsigned char encrypted[BUFFER_SIZE];
+	encrypt_password("password", "seed", encrypted);
 
-	// Convert unsigned char array into hex
-	stringstream s;
-    s << encrypted;
-    string encrypted_password = s.str();
-    cout << "\n\nTEST PASS: " << encrypted_password << "\n\n";
+	// Write it to a file
 
 
-    decrypt_password(encrypted, "seed");
 
-	// TO GO IN READ PASSWORD FUNCTION 
+	// Test decryption
+	decrypt_password(encrypted, "seed");
 
-	// Read the password from a file in hex
-    /*string filepath = "./.store/" + seed;
-	ifstream in(filepath.c_str());
-	string line; string x;
-	while (in >> line) { x += line; }
-
-	cout << "Reading from file: " << x << "\n\n";
-	unsigned char test[16];
-	for (int i=0; i < x.size(); i++){
-		test[i] << x[i];
-		cout << test[i] << "\n"; 
-	}
-	cout << "test: " << test << "\n";
-	*/
-	//ofstream f("./.store/passwords/%s", hint);
-	//int x = sizeof(encrypted_password);
-	//cout << x;
+	
 
 
 

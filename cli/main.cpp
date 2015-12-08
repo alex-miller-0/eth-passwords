@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
     //}
 
     // Encrypt a password
-    write_password("password", "seed", "hint");
+    write_password("passwordpassword", "helloworlddd", "hint");
 
 
     // Finalize and exit

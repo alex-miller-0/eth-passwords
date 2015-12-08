@@ -6,6 +6,10 @@ using namespace std;
 
 // Helper functions
 string pad_string(string input, int size);
+string check_seed(string seed);
+void convert_string(string str, int size, unsigned char to_convert[]);
+
+// Encryption
 void encrypt_password(string password, string seed, unsigned char output[]);
 string decrypt_password(unsigned char encrypted_password[], string seed);
 
