@@ -179,23 +179,42 @@ string get_seed(){
 }
 
 
-// Write an encrypted password to a file given a hint
-bool write_password(string password, string seed, string hint){
+
+// Encrypt the password and write it to a file
+bool encrypt_and_write_password(string password, string seed, string hint){
 	
 	// Encrypt the password into an unsigned char array
 	unsigned char encrypted[BUFFER_SIZE];
-	encrypt_password("password", "seed", encrypted);
+	encrypt_password(password, seed, encrypted);
 
-	// Write it to a file
+	// Will abstract out the following steps....
 
+	// Write unsigned char array to file
+	string file_path = "./.store/passwords/"+hint;
+	const char* file = file_path.c_str();
 
+	ofstream f(file);
+	f.write((char *)&encrypted[0], BUFFER_SIZE);
+	f.close();
 
-	// Test decryption
-	decrypt_password(encrypted, "seed");
+	return 1;
+}
 
+bool decrypt_and_read_password(string seed, string hint){
+
+	// Declare new char array
+	unsigned char new_encrypted[BUFFER_SIZE];
 	
+	// Read unsigned char array from file
+	string file_path = "./.store/passwords/"+hint;
+	const char* file = file_path.c_str();
 
+	ifstream g(file);
+	g.read((char *)&new_encrypted[0], BUFFER_SIZE);
+	g.close();
 
+	// Decrypt
+	decrypt_password(new_encrypted, seed);
 
 	return 1;
 }

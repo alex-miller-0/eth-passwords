@@ -41,6 +41,8 @@ int main(int argc, char* argv[]) {
     // DECLARE GLOBAL VARS
     //==============================
     string SEED = "";
+    string HINT = "";
+    string PASSWORD = "";
 
 
 
@@ -66,7 +68,14 @@ int main(int argc, char* argv[]) {
     // Destroy the seed file
     int seed_destroy = check_flag(argv, argc, "-sd");
 
+    // Assign a password if one is provided
+    int password_i = check_flag(argv, argc, "-p");
 
+    // Encrypt?
+    int encrypt = check_flag(argv, argc, "--encrypt");
+
+    // Decrypt?
+    int decrypt = check_flag(argv, argc, "--decrypt");
 
     // EXECUTE:
     //==============================
@@ -86,18 +95,39 @@ int main(int argc, char* argv[]) {
         write_seed(SEED);
     }
 
+    // Initialize a contract
     if (init_i > 0) {
         string contract = build_contract(argv[init_i]);
         bool deployed = deploy_contract(contract, "Password", "2060");
     } 
+
     //else if (method_i > 0){
         //string method_id = "0x";
         //call_contract(argv[i+1]);
     //}
 
-    // Encrypt a password
-    write_password("passwordpassword", "helloworlddd", "hint");
+    // Set the hint based on encrypt or decrypt flags
+    if (encrypt > 0){ HINT = argv[encrypt]; } 
+    else if (decrypt > 0) { HINT = argv[decrypt]; }
 
+    // Set the password
+    if (password_i > 0){ PASSWORD = argv[password_i]; }
+
+    // Encrypt a password. Make sure seed, hint, and password are available.
+    if (encrypt > 0 && (seed_i > 0 || SEED != "") && HINT != "" && PASSWORD != ""){
+        
+        encrypt_and_write_password(PASSWORD, SEED, HINT);
+    }
+
+    // Decrypt a password. Make sure both seed and hint are available.
+    if (decrypt > 0 && (seed_i > 0 || SEED != "") && HINT != "" ){
+        decrypt_and_read_password(SEED, HINT);
+    }
+
+
+    // Keep this for testing. The command line flags don't work yet
+    encrypt_and_write_password("passwordpassword", "helloworlddd", "hint");
+    decrypt_and_read_password("helloworlddd", "hint");
 
     // Finalize and exit
     system("pkill geth");

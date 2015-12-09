@@ -1,2 +1,3 @@
 test/private_chain/*
 cli/main
+cli/.store/*

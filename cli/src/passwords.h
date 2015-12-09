@@ -18,7 +18,9 @@ bool write_seed(string seed);
 bool destroy_seed();
 string get_seed();
 
+
 // Password file related functions
-bool write_password(string password, string seed, string hint);
+bool encrypt_and_write_password(string password, string seed, string hint);
+bool decrypt_and_read_password(string seed, string hint);
 
 #endif
