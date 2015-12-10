@@ -10,8 +10,9 @@ string get_contract_address();
 string shell(string _request);
 
 const char* rpc_call(string method, string params, string port);
+string get_primary_address(string port);
 
-string build_contract(char* seed);
+string build_contract(string address);
 bool deploy_contract(string contract, string contractName, string port);
 //string call_contract(char* method)
 bool write_seed(string seed);

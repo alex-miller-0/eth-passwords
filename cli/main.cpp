@@ -97,7 +97,9 @@ int main(int argc, char* argv[]) {
 
     // Initialize a contract
     if (init_i > 0) {
-        string contract = build_contract(argv[init_i]);
+        string primary_address = get_primary_address("2060");
+        string contract = build_contract(primary_address);
+        cout << "Contract: " << contract << endl;
         bool deployed = deploy_contract(contract, "Password", "2060");
     } 
 
@@ -124,10 +126,13 @@ int main(int argc, char* argv[]) {
         decrypt_and_read_password(SEED, HINT);
     }
 
+    cout << "PASSWORD: " << PASSWORD << endl;
+    cout << "SEED: " << SEED << endl;
+    cout << "HINT: " << HINT << endl;
 
     // Keep this for testing. The command line flags don't work yet
-    encrypt_and_write_password("passwordpassword", "helloworlddd", "hint");
-    decrypt_and_read_password("helloworlddd", "hint");
+    //encrypt_and_write_password("passwordpassword", "helloworlddd", "hint");
+    //decrypt_and_read_password("helloworlddd", "hint");
 
     // Finalize and exit
     system("pkill geth");

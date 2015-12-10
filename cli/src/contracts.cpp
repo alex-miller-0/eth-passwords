@@ -73,6 +73,9 @@ rapidjson::Value& rpc_call(string method, string params, string port){
     rapidjson::Document d;
     d.Parse(response);
     
+    cout << "Request: " << request << endl;
+    cout << "Response: " << response << endl;
+
     // Assert that d is an object
     // TODO throw an exception so this doesn't crash the whole process
     assert (d.IsObject());
@@ -82,31 +85,37 @@ rapidjson::Value& rpc_call(string method, string params, string port){
     return return_response;
 }
 
+// Get the primary address of your account. 
+// Currently, this is the only one you can use to deploy a contract.
+string get_primary_address(string port){
+    rapidjson::Value& primary_address = rpc_call("eth_accounts", "", port);
+    string address = primary_address[0].GetString();
+    return address;
+}
+
 //===============================================================================
 // BUILDING THE CONTRACT
 //===============================================================================
 
 // Build the Password contract before deploying
-string build_contract(char* seed){
+string build_contract(string address){
     string contract = "\"contract Password {";
     // Global vars
-    contract += "bytes32 Seed="+to_bytes32(seed)+";";
-    contract += "bytes32[] public Identifiers;";
+    contract += "address MyAddress="+address+";";
+    contract += "bytes32[] Identifiers;";
+    contract += "bytes32[] Passwords;";
     // Functions
 
-    // For testing: get the seed
-    contract += "function getSeed() returns(bytes32 seed){return Seed;}";
 
     // Create an identifier and a password
-    //contract += "function create(address _user_address, bytes32 _identifier, bytes32 _seed){ if (sha3(_user_address,_seed) == Seed){Identifiers[Identifiers.length++] = _identifier;returnHash(_user_address, _seed, _identifier);}}";
+    contract += "function addPassword(bytes32 identifier, bytes32 password) \
+        { Identifiers[Identifiers.length++] = identifier; }";
+
+    // Get a password given an identifier
+    //contract += "function get_password(bytes32 identifier) returns (bytes32) \
+    //   { for (uint i=0; i<Identifiers.length; i++){if (Identifiers[i] == identifier){ return Passwords[i]; } } }";
     
-    // Get a password given an identifier and the seed
-    //contract += "function get_password(address _user_address, bytes32 _identifier, bytes32 _seed){if (sha3(_user_address, _seed) == Seed){for (uint i=0; i<Identifiers.length; i++){if (Identifiers[i] == _identifier){returnHash(_user_address, _seed, _identifier);}}}}";
-    
-    // Utility functions for returning data
-    //contract += "function returnHash(address _user_address, bytes32 _seed, bytes32 _identifier) returns (bytes32 hash){return sha3(_user_address, _seed, _identifier);}";
-    //contract += "function fReturn(string to_return) returns (string) {return to_return;}";
-    
+
     contract += "}\"";
     
     return contract;
@@ -129,23 +138,31 @@ bool write_contract_address(string address){
 
 bool deploy_contract(string contract, string contractName, string port){
 
+
     // Compile the contract
     rapidjson::Value& compiled_contract = rpc_call("eth_compileSolidity", contract, port);
     string code = compiled_contract["Password"]["code"].GetString();
 
+    cout << "compiled" << endl;
+
     // Get primary account address
-    rapidjson::Value& primary_address = rpc_call("eth_accounts", "", port);
-    string address = primary_address[0].GetString();
+    /*rapidjson::Value& primary_address = rpc_call("eth_accounts", "", port);
+    string address = primary_address[0].GetString();*/
+    string address = get_primary_address(port);
+
+    cout << "got address" << endl;
     
     // Deploy the contract and get the txn hash
     string deploy_data = "{\"from\":\""+address+"\", \"data\":\""+code+"\"}";
     rapidjson::Value& deploy = rpc_call("eth_sendTransaction", deploy_data, port);
     string txn = deploy.GetString();
 
+    cout << "deployed" << endl;
+
     // Wait 10 seconds for the contract to deploy (may need to change this to ~15 for live blockchain)
     // TODO This fails sometimes (i.e. returns null and crashes rapidjson); throw an exception when that happens
     cout << "Deploying contract ";
-    for (int i=0; i<10; i++){
+    for (int i=0; i<15; i++){
         system("sleep 1");
         cout << "=" << flush;
     }
@@ -155,7 +172,7 @@ bool deploy_contract(string contract, string contractName, string port){
     rapidjson::Value& txn_receipt = rpc_call("eth_getTransactionReceipt", "\""+txn+"\"", port);
     string txn_address = txn_receipt["contractAddress"].GetString();
     string block_no = txn_receipt["blockNumber"].GetString();
-    ;
+    
     // Make sure the code was successfully deployed
     rapidjson::Value& check_deployed = rpc_call("eth_getCode", "\""+txn_address+"\", \""+block_no+"\"", port);
     string deployed = check_deployed.GetString();
@@ -174,6 +191,11 @@ bool deploy_contract(string contract, string contractName, string port){
     }
 
 }
+
+
+//===============================================================================
+// CALLING THE CONTRACT
+//===============================================================================
 
 /*
 string call_contract(char* method){
