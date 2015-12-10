@@ -11,14 +11,26 @@ Use the following flags to manage your passwords:
      -i             Initializes and deploys a new contract. 
                     Requires geth to be running with RPC enabled and an unlocked Ethereum account.
     
+    --encrypt <arg> Encrypts a password with AES and saves it to a file locally. The arg is used as a hint 
+                    (also the file name). Requires a seed value and a password.
+                    
+    --decrypt <arg> Decrypts a locally stored, encrypted password. The arg is used as a hint (and also the file name).
+                    Requires the seed value with which the password was encrypted.
+           
+                    
+    Passwords:
+    -p <arg>        Uses the arg as a password for an action
+    
+    
     Seed storage:
     -s <arg>        Uses the argument as the seed value
+    
     -sw             Writes the seed (requires -s) to a local file
+    
     -sd             Deletes the seed file
    
 
     TODO
-    -p <arg>        Uses the seed (arg) to encrypt a password
 
     -m <arg>        Calls one of the methods in the deployed contract (arg = method title).
 ## Components
