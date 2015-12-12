@@ -1,12 +1,8 @@
 #!/bin/sh
 
-OPENSSL_DIR="/usr/local/ssl"
-
-OPENSSL_LIB="${OPENSSL_DIR}/lib"
-OPENSSL_INCLUDE="${OPENSSL_DIR}/include/openssl"
+OPENSSL_DIR="/usr/lib"
 
 g++ -c src/contracts.cpp -o src/contracts.o
 g++ -c src/passwords.cpp -o src/passwords.o
 
-g++ src/*.o $OPENSSL_LIB/*.a -I$OPENSSL_INCLUDE  main.cpp -o ./../cli_executable
-
+g++ src/*.o -L$OPENSSL_DIR -lssl -lcrypto   main.cpp -o ./../cli_executable
