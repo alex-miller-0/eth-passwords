@@ -130,10 +130,6 @@ int main(int argc, char* argv[]) {
     cout << "SEED: " << SEED << endl;
     cout << "HINT: " << HINT << endl;
 
-    // Keep this for testing. The command line flags don't work yet
-    //encrypt_and_write_password("passwordpassword", "helloworlddd", "hint");
-    //decrypt_and_read_password("helloworlddd", "hint");
-
     // Finalize and exit
     system("pkill geth");
     return 1;
