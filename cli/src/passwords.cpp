@@ -9,8 +9,8 @@
 #include <cstring>
 
 // Include openssl for local encryption
-#include "openssl/include/openssl/aes.h"
-
+//#include "aes.h"
+#include "/usr/local/ssl/include/openssl/aes.h"
 using namespace std;
 
 
