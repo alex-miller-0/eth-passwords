@@ -1,0 +1,7 @@
+The cli_executable is precompiled, but if you wish to make changes and compile it yourself you can do so by running
+
+    ./compile.sh
+
+The only real dependency is openssl. (https://github.com/openssl/openssl) 
+Make openssl to the standard locations and you can run compile.sh as is. 
+If you install openssl somewhere else, just include the lib path at the top of compile.sh.
