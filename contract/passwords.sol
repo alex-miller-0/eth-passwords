@@ -1,64 +1,29 @@
 contract Password {
-    // A seed to hash a given password with
-    // This should itself be a hash of the account address and a master password string
-    bytes32 Seed=0000000000000000000000000000000000000000000000000000000000000001;
-
-    // An array of identifier strings to use when getting a password
-    bytes32[] public Identifiers;
-
-    // Add an identifier to the array  
-    function create(address _user_address, bytes32 _identifier, bytes32 _seed){
-        if (sha3(_user_address,_seed) == Seed){
-            // Append the Identifiers array with a new one
-            Identifiers[Identifiers.length++] = _identifier;
-            // Return the newly minted password
-            returnHash(_user_address, _seed, _identifier);
-        }
-    }
     
-    // Get a password after finding the identifier in the array
-    function get_password(address _user_address, bytes32 _identifier, bytes32 _seed){
-        if (sha3(_user_address, _seed) == Seed){
-            // Find the appropriate identifier
-            for (uint i=0; i<Identifiers.length; i++){
-                if (Identifiers[i] == _identifier){
-                    returnHash(_user_address, _seed, _identifier);
-                }
+    // In the cli, the address is prepopulated with the user's wallet's primary address.
+    address MyAddress; 
+    
+    // A simple struct containing a password/hint combination
+    struct Object {bytes32 hint; bytes32 password;} 
+    
+    // The bank will be an array of password/hint combinations
+    Object[0] bank; 
+    
+    // To add a password (an encrypted string), simply append the bank
+    function addPassword(bytes32 pass, bytes32 hint) { 
+        bank[bank.length+1].password = pass; 
+        bank[bank.length+1].hint = hint; 
+    } 
+    
+    // Search the bank for a hint matching the one that was passed. If it gets a hit, it returns the encrypted password.
+    function getPassword(bytes32 hint) returns (bytes32) { 
+        bytes32 to_return; 
+        for (uint i=0; i<bank.length; i++) {
+            if (bank[i].hint == hint) { 
+                to_return = bank[i].password; 
             }
-        }
+        } 
+        return to_return; 
     }
     
-    function get_seed() returns (bytes32 seed){
-        return Seed;
-    }
-
-    // Get a list of your identifiers
-    // BUZZKILL... solidity does not yet support return of arrays... will need to find a way to concatenate
-    //function get_list(address_user_address, bytes32 _seed) returns (bytes32[]){
-    //    if (sha3(_user_address,_seed) == Seed){
-    //        return Identifiers;
-    //    }  
-    //}
-
-
-    // Update an identifier (TODO)
-
-    // Delete an identifier (TODO)
-    
-
-    // Return a hash
-    function returnHash(address _user_address, bytes32 _seed, bytes32 _identifier) returns (bytes32 hash){
-        return sha3(_user_address, _seed, _identifier);
-    }
-
-
-    // Return something (an identifier or password)
-    function fReturn(string to_return) returns (string) {
-        return to_return;
-    }
-
-
-
-
-
 }
