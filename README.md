@@ -54,6 +54,5 @@ At this point, you may use the CLI to view all of your encrypted passwords local
 
 
 ### TODO:
-- Figure out how to get the contract address from a new computer
+- Figure out how to find the contract address from a new computer
 - Finish all the methods
-- Figure out how to concatenate identifiers array in solididy (it needs to return these)
