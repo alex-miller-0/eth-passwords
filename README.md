@@ -8,31 +8,37 @@ Use the following flags to manage your passwords:
     --test          Uses the private blockchain included in the repo
     
     Actions:
-     -i             Initializes and deploys a new contract. 
-                    Requires geth to be running with RPC enabled and an unlocked Ethereum account.
+     -i                 Initializes and deploys a new contract. 
+                        Requires geth to be running with RPC enabled and an unlocked Ethereum account.
     
-    --encrypt <arg> Encrypts a password with AES and saves it to a file locally. The arg is used as a hint 
-                    (also the file name). Requires a seed value and a password.
+    --encrypt <arg>     Encrypts a password with AES and saves it to a file locally. 
+                        The arg is used as a hint (also the file name). 
+                        Requires a seed value and a password.
                     
-    --decrypt <arg> Decrypts a locally stored, encrypted password. The arg is used as a hint (and also the file name).
-                    Requires the seed value with which the password was encrypted.
+    --decrypt <arg>     Decrypts a locally stored, encrypted password. 
+                        The arg is used as a hint (and also the file name).
+                        Requires the seed value with which the password was encrypted.
            
                     
     Passwords:
-    -p <arg>        Uses the arg as a password for an action
+    -p <arg>            Uses the arg as a password for an action
     
     
     Seed storage:
-    -s <arg>        Uses the argument as the seed value
+    -s <arg>            Uses the argument as the seed value
     
-    -sw             Writes the seed (requires -s) to a local file
+    -sw                 Writes the seed (requires -s) to a local file
     
-    -sd             Deletes the seed file
+    -sd                 Deletes the seed file
    
 
     TODO
 
-    -m <arg>        Calls one of the methods in the deployed contract (arg = method title).
+    --upload            Uploads an encrypted password to the blockchain. 
+                        Must be used in conjunction with either encrypt or decrypt.
+                        
+    --download <arg>    Download an encrypted password and save it locally. 
+                        After this, it can be decrypted to plain text.
 ## Components
 There are three main components in this repo.
 #### Contract
