@@ -98,6 +98,7 @@ int main(int argc, char* argv[]) {
     // Initialize a contract
     if (init_i > 0) {
         string primary_address = get_primary_address("2060");
+        cout << "Primary Address: " << primary_address << endl;
         string contract = build_contract(primary_address);
         cout << "Contract: " << contract << endl;
         bool deployed = deploy_contract(contract, "Password", "2060");
@@ -117,13 +118,13 @@ int main(int argc, char* argv[]) {
 
     // Encrypt a password. Make sure seed, hint, and password are available.
     if (encrypt > 0 && (seed_i > 0 || SEED != "") && HINT != "" && PASSWORD != ""){
-        
         encrypt_and_write_password(PASSWORD, SEED, HINT);
     }
 
     // Decrypt a password. Make sure both seed and hint are available.
     if (decrypt > 0 && (seed_i > 0 || SEED != "") && HINT != "" ){
-        decrypt_and_read_password(SEED, HINT);
+        string decrypted_password = decrypt_and_read_password(SEED, HINT);
+        cout << "decrypted_password: " << decrypted_password << endl;
     }
 
     cout << "PASSWORD: " << PASSWORD << endl;

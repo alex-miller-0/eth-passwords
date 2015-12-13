@@ -101,19 +101,24 @@ string get_primary_address(string port){
 string build_contract(string address){
     string contract = "\"contract Password {";
     // Global vars
-    contract += "address MyAddress="+address+";";
-    contract += "bytes32[] Identifiers;";
-    contract += "bytes32[] Passwords;";
+    //---------------------------------------
+    contract += "address MyAddress="+address+"; ";
+    contract += "struct Object {bytes32 hint; bytes32 password;} ";
+    contract += "Object[0] bank; ";
+    
     // Functions
+    //---------------------------------------
 
 
-    // Create an identifier and a password
-    contract += "function addPassword(bytes32 identifier, bytes32 password) \
-        { Identifiers[Identifiers.length++] = identifier; }";
+    // Create an identifier and a password by appending to the bank
+    contract += "function addPassword(bytes32 pass, bytes32 hint) { bank[bank.length+1].password = pass; bank[bank.length+1].hint = hint; } ";
+    
+    // Destroy a password
+    //contract += "function deletePassword(bytes32 pass, bytes32 hint) { uint L = getLength(); delete bank[L].password; delete bank[L].hint; } ";
+
 
     // Get a password given an identifier
-    //contract += "function get_password(bytes32 identifier) returns (bytes32) \
-    //   { for (uint i=0; i<Identifiers.length; i++){if (Identifiers[i] == identifier){ return Passwords[i]; } } }";
+    contract += "function getPassword(bytes32 hint) returns (bytes32) { bytes32 to_return; for (uint i=0; i<bank.length; i++) {if (bank[i].hint == hint) { to_return = bank[i].password; }} return to_return; }";
     
 
     contract += "}\"";
@@ -181,7 +186,7 @@ bool deploy_contract(string contract, string contractName, string port){
     int len = deployed.size();
     if (len > 2){
         // Write the address to a file
-        bool written = write_contract_address(deployed);
+        bool written = write_contract_address(txn_address);
         if (written == 1){cout << "Contract deployed successfully!\n\n" << flush; return 1;}
         else {return 0;}
     }
@@ -197,26 +202,9 @@ bool deploy_contract(string contract, string contractName, string port){
 // CALLING THE CONTRACT
 //===============================================================================
 
-/*
-string call_contract(char* method){
-    // Get the first four bytes of the method header
-    string first_four = get_first_four(method);    
-    string vars = "";
-    string contract_address = get_contract_address();
+// Upload a password to the blockchain
+bool uploadPassword(string password, string hint){
 
-    // Build the command
-    string shell_call = "shell/call.sh \"0x"+first_four+vars+"\" \""+contract_address+"\"";
-    const char* shell_call_command = shell_call.c_str();
-
-    // Execute shell script
-    FILE *fp = popen(shell_call_command, "r");
-    char buf[1024];
-    ofstream fcall;
-    fcall.open("./.store/getSeed");
-    while(fgets(buf,1024, fp)) {cout << buf;}
-    fcall.close();
-    fclose(fp);
-
-    return "";
 }
-*/
+
+

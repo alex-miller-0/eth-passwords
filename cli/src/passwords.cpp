@@ -92,8 +92,8 @@ string decrypt_password(unsigned char encrypted_password[], string seed){
 	AES_decrypt(encrypted_password, out_buffer, &dec_key);
 	printf("outbuffer: %s\n",out_buffer);
 
-
-    return "test";
+	string password(reinterpret_cast<const char*>(out_buffer));
+    return password;
 }
 
 
@@ -200,7 +200,7 @@ bool encrypt_and_write_password(string password, string seed, string hint){
 	return 1;
 }
 
-bool decrypt_and_read_password(string seed, string hint){
+string decrypt_and_read_password(string seed, string hint){
 
 	// Declare new char array
 	unsigned char new_encrypted[BUFFER_SIZE];
@@ -214,8 +214,8 @@ bool decrypt_and_read_password(string seed, string hint){
 	g.close();
 
 	// Decrypt
-	decrypt_password(new_encrypted, seed);
+	string password = decrypt_password(new_encrypted, seed);
 
-	return 1;
+	return password;
 }
 
